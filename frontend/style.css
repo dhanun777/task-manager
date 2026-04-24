@@ -1,0 +1,116 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Background */
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  font-family: Arial;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+}
+
+.container {
+  width: 350px;
+  background: #1e293b;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+h1 {
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #38bdf8;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: none;
+  background: #334155;
+  color: white;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #38bdf8;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+.logout {
+  background: #ef4444;
+}
+
+.logout:hover {
+  background: #dc2626;
+}
+
+ul {
+  list-style: none;
+  margin-top: 10px;
+}
+
+li {
+  background: #334155;
+  padding: 8px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+/* Delete button */
+li button {
+  width: auto;
+  padding: 5px 10px;
+  background: #ef4444;
+  color: white;
+}
+
+li button:hover {
+  background: #dc2626;
+}
+label {
+  display: block;
+  text-align: left;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+li input {
+  width: auto;
+  transform: scale(1.2);
+}
+
+li span {
+  flex: 1;
+  margin-left: 10px;
+}

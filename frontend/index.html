@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <!-- PROJECT TITLE -->
+  <h1>Task Manager</h1>
+
+  <!-- LOGIN SECTION -->
+  <div id="loginSection">
+    <h2>Login</h2>
+    <label>email</label>
+    <input type="email" id="email" placeholder="Enter Email">
+    <label>password</label> 
+    <input type="password" id="password" placeholder="Enter Password">
+
+    <button onclick="login()">Login</button>
+
+    <p>I don't have an account?</p>
+    <button onclick="goToSignup()">Signup</button>
+  </div>
+
+  <!-- TASK SECTION -->
+  <div id="taskSection" style="display:none;">
+    
+    <h2>Add Task</h2>
+    <label>Task Name</label>
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <button onclick="addTask()">Add Task</button>
+
+    <ul id="taskList"></ul>
+
+    <button onclick="logout()" class="logout">Logout</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
