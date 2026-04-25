@@ -164,19 +164,10 @@ app.put("/tasks/edit/:id", async (req, res) => {
 
   res.json(task);
 });
-const PORT = process.env.PORT || 5000;
 
-mongoose.connection.once("open", () => {
-  console.log("DB Connected");
-
-  app.listen(PORT, () => {
-    console.log("Server running on port", PORT);
-  });
-});
 
 /* ================= START SERVER ================= */
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
