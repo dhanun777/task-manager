@@ -17,9 +17,12 @@ app.use(cors({
 app.use(express.json());
 
 /* ================= DATABASE ================= */
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.log("DB ERROR:", err));
 
 /* ================= MODELS ================= */
 const UserSchema = new mongoose.Schema({
@@ -160,6 +163,15 @@ app.put("/tasks/edit/:id", async (req, res) => {
   );
 
   res.json(task);
+});
+const PORT = process.env.PORT || 5000;
+
+mongoose.connection.once("open", () => {
+  console.log("DB Connected");
+
+  app.listen(PORT, () => {
+    console.log("Server running on port", PORT);
+  });
 });
 
 /* ================= START SERVER ================= */
