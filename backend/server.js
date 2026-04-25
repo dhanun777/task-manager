@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,7 +6,14 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
+
+/* ================= CORS FIX ================= */
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
 /* ================= DATABASE ================= */
@@ -36,6 +42,7 @@ const Task = mongoose.model("Task", TaskSchema);
 /* ================= MIDDLEWARE ================= */
 function auth(req, res, next) {
   const token = req.headers.authorization;
+
   if (!token) return res.status(401).send("No token");
 
   try {
@@ -47,17 +54,27 @@ function auth(req, res, next) {
   }
 }
 
+/* ================= TEST ROUTE ================= */
+app.get("/", (req, res) => {
+  res.send("API working");
+});
+
 /* ================= ROUTES ================= */
 
 // SIGNUP
 app.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const hashed = await bcrypt.hash(password, 10);
+    const hashed = await bcrypt.hash(password, 10);
 
-  await User.create({ email, password: hashed });
+    await User.create({ email, password: hashed });
 
-  res.send("User created");
+    res.send("User created");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Signup error");
+  }
 });
 
 // LOGIN
@@ -109,10 +126,7 @@ app.delete("/tasks/:id", auth, async (req, res) => {
   res.send("Deleted");
 });
 
-/* ================= START SERVER ================= */
-app.listen(process.env.PORT, () => {
-  console.log("Server running on port", process.env.PORT);
-});
+// UPDATE COMPLETE
 app.put("/tasks/:id", async (req, res) => {
   const { completed } = req.body;
 
@@ -124,6 +138,8 @@ app.put("/tasks/:id", async (req, res) => {
 
   res.json(task);
 });
+
+// EDIT TEXT
 app.put("/tasks/edit/:id", async (req, res) => {
   const { text } = req.body;
 
@@ -134,4 +150,11 @@ app.put("/tasks/edit/:id", async (req, res) => {
   );
 
   res.json(task);
+});
+
+/* ================= START SERVER ================= */
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
