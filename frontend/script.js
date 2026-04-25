@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://task-manager-backend-ycyd.onrender.com";
 
 // LOGIN
 async function login() {
@@ -6,14 +6,13 @@ async function login() {
   const password = document.getElementById("password").value;
 
   try {
-    const res = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
+    const res = await fetch("https://task-manager-backend-ycyd.onrender.com/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ email, password })
+});
     // 👇 HANDLE ERROR RESPONSE PROPERLY
     if (!res.ok) {
       const text = await res.text();
@@ -37,9 +36,17 @@ async function login() {
 }
 // ADD TASK
 async function addTask() {
-  const task = document.getElementById("taskInput").value;
+  const input = document.getElementById("taskInput");
+  const task = input.value;
 
-  await fetch(`${BASE_URL}/tasks`, {
+  // 🔥 Prevent empty task (you already added)
+  if (!task.trim()) {
+    alert("Enter task");
+    return;
+  }
+
+  // 🔥 Send to backend
+  const res = await fetch("https://task-manager-backend-ycyd.onrender.com/tasks", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,6 +55,16 @@ async function addTask() {
     body: JSON.stringify({ text: task })
   });
 
+  // 🔥 Handle error
+  if (!res.ok) {
+    alert("Failed to add task");
+    return;
+  }
+
+  // ✅ STEP 3 (IMPORTANT)
+  input.value = "";
+
+  // 🔄 Reload tasks
   loadTasks();
 }
 
@@ -60,7 +77,11 @@ async function loadTasks() {
   });
 
   const tasks = await res.json();
-
+  
+if (tasks.length === 0) {
+  taskList.innerHTML = "<p>No tasks yet</p>";
+  return;
+}
   taskList.innerHTML = "";
 
   tasks.forEach(t => {
@@ -83,7 +104,9 @@ async function loadTasks() {
   });
 }
 async function deleteTask(id) {
-  await fetch(`${BASE_URL}/tasks/${id}`, {
+  if (!confirm("Are you sure?")) return;
+
+  await fetch(`https://task-manager-backend-ycyd.onrender.com/tasks/${id}`, {
     method: "DELETE",
     headers: {
       "Authorization": localStorage.getItem("token")
@@ -113,14 +136,13 @@ async function signup() {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
+    const res = await fetch("https://task-manager-backend-ycyd.onrender.com/signup", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ email, password })
+});
     const text = await res.text();
     alert(text);
 
@@ -139,7 +161,7 @@ function goToLogin() {
   window.location.href = "index.html";
 }
 async function toggleTask(id, completed) {
-  await fetch(`http://localhost:5000/tasks/${id}`, {
+  await fetch(`https://task-manager-backend-ycyd.onrender.com/tasks/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -150,18 +172,8 @@ async function toggleTask(id, completed) {
 
   loadTasks();
 }
-app.put("/tasks/:id", async (req, res) => {
-  const { completed } = req.body;
-
-  const task = await Task.findByIdAndUpdate(
-    req.params.id,
-    { completed },
-    { new: true }
-  );
-
-  res.json(task);
-});
-async function toggleTask(id, completed) {
+ 
+async function toggleTask(id, completed) { 
   await fetch(`${BASE_URL}/tasks/${id}`, {
     method: "PUT",
     headers: {

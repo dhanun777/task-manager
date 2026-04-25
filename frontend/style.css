@@ -114,3 +114,6 @@ li span {
   flex: 1;
   margin-left: 10px;
 }
+* {
+  user-select: none;
+}
