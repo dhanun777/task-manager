@@ -66,13 +66,23 @@ app.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).send("Missing fields");
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).send("User already exists");
+    }
+
     const hashed = await bcrypt.hash(password, 10);
 
     await User.create({ email, password: hashed });
 
     res.send("User created");
+
   } catch (err) {
-    console.log(err);
+    console.log("SIGNUP ERROR:", err);
     res.status(500).send("Signup error");
   }
 });
