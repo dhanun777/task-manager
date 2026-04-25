@@ -7,27 +7,22 @@ require("dotenv").config();
 
 const app = express();
 
-/* ================= CORS FIX ================= */
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
+/* ================= MIDDLEWARE ================= */
+app.use(cors());
 app.use(express.json());
 
 /* ================= DATABASE ================= */
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log("DB ERROR:", err));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => {
+    console.log("DB ERROR:", err);
+    process.exit(1); // stop server if DB fails
+  });
 
 /* ================= MODELS ================= */
 const UserSchema = new mongoose.Schema({
-  email: String,
-  password: String
+  email: { type: String, required: true },
+  password: { type: String, required: true }
 });
 
 const TaskSchema = new mongoose.Schema({
@@ -42,7 +37,7 @@ const TaskSchema = new mongoose.Schema({
 const User = mongoose.model("User", UserSchema);
 const Task = mongoose.model("Task", TaskSchema);
 
-/* ================= MIDDLEWARE ================= */
+/* ================= AUTH MIDDLEWARE ================= */
 function auth(req, res, next) {
   const token = req.headers.authorization;
 
@@ -112,7 +107,7 @@ app.post("/login", async (req, res) => {
     res.json({ token });
 
   } catch (err) {
-    console.log(err);
+    console.log("LOGIN ERROR:", err);
     res.status(500).send("Server error");
   }
 });
@@ -140,7 +135,7 @@ app.delete("/tasks/:id", auth, async (req, res) => {
 });
 
 // UPDATE COMPLETE
-app.put("/tasks/:id", async (req, res) => {
+app.put("/tasks/:id", auth, async (req, res) => {
   const { completed } = req.body;
 
   const task = await Task.findByIdAndUpdate(
@@ -153,7 +148,7 @@ app.put("/tasks/:id", async (req, res) => {
 });
 
 // EDIT TEXT
-app.put("/tasks/edit/:id", async (req, res) => {
+app.put("/tasks/edit/:id", auth, async (req, res) => {
   const { text } = req.body;
 
   const task = await Task.findByIdAndUpdate(
@@ -165,9 +160,9 @@ app.put("/tasks/edit/:id", async (req, res) => {
   res.json(task);
 });
 
-
 /* ================= START SERVER ================= */
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log(`Server running on port ${PORT}`);
 });
